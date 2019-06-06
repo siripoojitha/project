@@ -5,25 +5,19 @@
         <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>>
     </head>
     <body>
-            <div class="container">
-                    <div class="row">
-                      <div class="col-sm">
-                        One of three columns
-                      </div>
-                      <div class="col-sm">
-                        One of three columns
-                      </div>
-                      <div class="col-sm">
-                        One of three columns
-                      </div>
-                    </div>
-                  </div>
-        <!-- <div class="container">
+        <div class="container">
             <div class="row">
-                <div class="col-12">
+                <div class="col-md-12">
                     <form action = "/uploader" 
                         method = "POST" enctype = "multipart/form-data">
                         <input type = "file" name = "file" />
@@ -32,7 +26,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
+                <div class="col-md-3">
                     <ul class="list-group" style="list-style-type: none;">
                         {% for imgFile in fileList %}
                         <li class="list-group-item">
@@ -43,13 +37,13 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="col">
+                <div class="col-md-9">
                     <section id="3d-points">
                         <svg width="960" height="500"></svg>
                     </section>
                 </div>
             </div>
-        </div> -->
+        </div>
     </body>
     
     <!-- threejs require better render
@@ -62,6 +56,6 @@
         console.log({ renderObject });
     </script>
     <script>
-        d3init();
+        d3init(renderObject.verts);
     </script>
 </html>
