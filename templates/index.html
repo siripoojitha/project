@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+            <div class="container">
+                    <div class="row">
+                      <div class="col-sm">
+                        One of three columns
+                      </div>
+                      <div class="col-sm">
+                        One of three columns
+                      </div>
+                      <div class="col-sm">
+                        One of three columns
+                      </div>
+                    </div>
+                  </div>
+        <!-- <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <form action = "/uploader" 
+                        method = "POST" enctype = "multipart/form-data">
+                        <input type = "file" name = "file" />
+                        <input type = "submit"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <ul class="list-group" style="list-style-type: none;">
+                        {% for imgFile in fileList %}
+                        <li class="list-group-item">
+                            <a href="/display/{{imgFile}}">
+                                <img src="/upload_data/{{imgFile}}" alt="{{imgFile}}" height="150" width="150">
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col">
+                    <section id="3d-points">
+                        <svg width="960" height="500"></svg>
+                    </section>
+                </div>
+            </div>
+        </div> -->
+    </body>
+    
+    <!-- threejs require better render
+        <script src="/static/js/convexHull.js"></script>
+        <script src="/static/js/convexGeometry.js"></script> 
+    -->
+    <script src="/static/js/scatterPlot.js"></script>
+    <script>
+        var renderObject = {{ render|safe }};
+        console.log({ renderObject });
+    </script>
+    <script>
+        d3init();
+    </script>
+</html>
