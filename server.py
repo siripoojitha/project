@@ -21,9 +21,13 @@ model = None
 
 app = Flask(__name__, static_url_path='')
 app.config.update( TEMPLATES_AUTO_RELOAD=True )
+
 @app.route('/static/js/<path:path>')
 def send_js(path):
     return send_from_directory('templates/static/js', path)
+@app.route('/static/css/<path:path>')
+def send_css(path):
+    return send_from_directory('templates/static/css', path)
 
 @app.route('/upload_data/<path:path>')
 def send_upload_data(path):
@@ -64,10 +68,12 @@ def render(path):
     input_img, proc_param, img = preprocess_image('./upload_data/'+path)
     input_img = np.expand_dims(input_img, 0)
     joints, verts, cams, joints3d, theta = model.predict( input_img, get_theta=True)
+    print(cams[0])
     return {
         'imageLink': path.encode("utf-8"),
         'message': 'image received. size={}x{}'.format(img.shape[1], img.shape[0]),
         'verts': verts[0].tolist(),
+        'camera': cams[0].tolist()
     }
 
 if __name__ == "__main__":

@@ -53,6 +53,6 @@
         var renderObject = {{ render|safe }};
         // console.log({ renderObject });
         // d3init(renderObject.verts);
-        ThreeInit(renderObject.verts);
+        ThreeInit(renderObject.verts, renderObject.camera);
     </script>
 </html>

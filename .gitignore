@@ -2,4 +2,6 @@
 venv
 .ipynb_checkpoints/
 .vscode/
+upload_data/
+models/
 keras_Realtime_Multi-Person_Pose_Estimation/
