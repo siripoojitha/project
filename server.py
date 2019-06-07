@@ -20,6 +20,7 @@ from demo import preprocess_image, get_model
 model = None
 
 app = Flask(__name__, static_url_path='')
+app.config.update( TEMPLATES_AUTO_RELOAD=True )
 @app.route('/static/js/<path:path>')
 def send_js(path):
     return send_from_directory('templates/static/js', path)

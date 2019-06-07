@@ -1,0 +1,5 @@
+*.pyc
+venv
+.ipynb_checkpoints/
+.vscode/
+keras_Realtime_Multi-Person_Pose_Estimation/
