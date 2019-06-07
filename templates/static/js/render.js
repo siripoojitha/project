@@ -11,14 +11,19 @@ function animate() {
 }
 
 
-function ThreeInit(points) {
+function ThreeInit(points, view=null) {
     // SCENE
     scene = new THREE.Scene();
 
     // CAMERA
     camera = new THREE.PerspectiveCamera(50, 4 / 3, .5, 1000);
-    camera.position.set(3, 2, 1);
-    camera.lookAt(0, 0, 0);
+    if(view){
+        camera.position.set(view[0], view[1], view[2]);
+    }
+    else{
+        camera.position.set(1,1,1);
+    }
+    camera.lookAt(0, 1, 0);
     
     // GEOMETRY
     geometry = new THREE.BufferGeometry();
@@ -29,7 +34,7 @@ function ThreeInit(points) {
     for(let i = 0; i < numPoints; i++){
         positions[i*3] = points[i][0];
         positions[i*3 + 1] = points[i][1];
-        positions[i*3 + 2] = points[i][2];
+        positions[i*3 + 2] = -points[i][2];
         colors[i*3] = baseColor.r;
         colors[i*3 + 1] = baseColor.g;
         colors[i*3 + 2] = baseColor.b;
@@ -38,7 +43,7 @@ function ThreeInit(points) {
     geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
     geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
     geometry.computeBoundingBox();
-    const pointSize = 0.05;
+    const pointSize = 0.01;
     let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors } );
     let pointClouds = new THREE.Points(geometry, material);
     scene.add(pointClouds);
