@@ -2,10 +2,11 @@
 var camera, scene, renderer;
 var geometry, material, mesh;
 
+var mouse = new THREE.Vector2();
+
 function animate() {
     requestAnimationFrame( animate );
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
+    controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
     renderer.render( scene, camera );
 }
 
@@ -20,94 +21,57 @@ function ThreeInit(points) {
     camera.lookAt(0, 0, 0);
     
     // GEOMETRY
-    geometry = new THREE.Geometry();
-    
-    geometry.vertices = points.map(([x,y,z])=>{
-        return new THREE.Vector3(x,y,z);
-    });
-    for(let i =0; i<points.length-3;i+=2){
-        geometry.faces.push(new THREE.Face3(i,i+1,i+2));
-        geometry.faces.push(new THREE.Face3(i+1,i+2,i+3));
+    geometry = new THREE.BufferGeometry();
+    const numPoints = points.length;
+    var positions = new Float32Array( numPoints * 3 );
+    var colors = new Float32Array( numPoints * 3 );
+    const baseColor = new THREE.Color( 0, 1, 1 );
+    for(let i = 0; i < numPoints; i++){
+        positions[i*3] = points[i][0];
+        positions[i*3 + 1] = points[i][1];
+        positions[i*3 + 2] = points[i][2];
+        colors[i*3] = baseColor.r;
+        colors[i*3 + 1] = baseColor.g;
+        colors[i*3 + 2] = baseColor.b;
     }
     
-    // compute Normals
-    geometry.computeVertexNormals();
-    
-    // normalize the geometry
-    geometry.normalize();
-    
-    // MESH with GEOMETRY, and Normal MATERIAL
-    scene.add(new THREE.Mesh(
-    
-            // geometry as first argument
-            geometry,
-    
-            // then Material
-            new THREE.MeshNormalMaterial({
-                side: THREE.DoubleSide
-            })));
+    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+    geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
+    geometry.computeBoundingBox();
+    const pointSize = 0.05;
+    let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors } );
+    let pointClouds = new THREE.Points(geometry, material);
+    scene.add(pointClouds);
     
     // RENDER
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(320, 240);
-    document.getElementById('3d-points').appendChild(renderer.domElement);
-    renderer.render(scene, camera);
-    // camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-    // camera.position.z = 1;
-    // scene = new THREE.Scene();
-    // // GEOMETRY
-    // var geometry = new THREE.Geometry();
- 
-    // // create an array of vertices by way of
-    // // and array of vector3 instances
-    // geometry.vertices.push(
- 
-    //     new THREE.Vector3(0, 0, 0),
-    //     new THREE.Vector3(1, 0, 0),
-    //     new THREE.Vector3(1, 1, 0),
-    //     new THREE.Vector3(0, 1, 0),
- 
-    //     new THREE.Vector3(0, 0, -1),
-    //     new THREE.Vector3(1, 0, -1),
-    //     new THREE.Vector3(1, 1, -1),
-    //     new THREE.Vector3(0, 1, -1));
- 
-    // // create faces by way of an array of
-    // // face3 instances. (you just play connect
-    // // the dots with index values from the
-    // // vertices array)
-    // geometry.faces.push(
- 
-    //     new THREE.Face3(0, 1, 2),
-    //     new THREE.Face3(3, 0, 2),
-    //     new THREE.Face3(4, 5, 6),
-    //     new THREE.Face3(7, 4, 6),
- 
-    //     new THREE.Face3(0, 4, 1),
-    //     new THREE.Face3(1, 4, 5),
-    //     new THREE.Face3(3, 7, 2),
-    //     new THREE.Face3(2, 7, 6));
- 
-    // // compute Normals
-    // geometry.computeVertexNormals();
- 
-    // // normalize the geometry
-    // geometry.normalize();
-    // // geometry.vertices = points.map(([x,y,z])=>{
-    // //     return new THREE.Vector3(x,y,z);
-    // // });
-    // // for(let i =0; i<points.length-1;i+=3){
-    // //     geometry.faces.push(new THREE.Face3(i,i+1,i+2));
-    // // }
-    // material = new THREE.MeshNormalMaterial();
-    
-    // mesh = new THREE.Mesh( geometry, material );
-    // scene.add( mesh );
+    renderer = new THREE.WebGLRenderer();
+    let el = document.getElementById('3d-points');
+    const width = el.offsetWidth;
+    renderer.setSize(width, width*0.75);
+    el.appendChild(renderer.domElement);
+    window.addEventListener( 'resize', onWindowResize, false );
+    // controls
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    controls.dampingFactor = 0.25;
+    controls.screenSpacePanning = false;
+    controls.minDistance = 1;
+    controls.maxDistance = 500;
+    controls.maxPolarAngle = Math.PI / 2;
+    animate();
+}
 
-    // renderer = new THREE.WebGLRenderer( { antialias: true } );
-    // let el = document.getElementById('3d-points');
-    // renderer.setSize( 400, 400 );
-    // el.appendChild( renderer.domElement );
-    // animate();
+function onDocumentMouseMove( event ) {
+    event.preventDefault();
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+function onWindowResize() {
+    let el = document.getElementById('3d-points');
+    const width = el.offsetWidth;
+    camera.aspect = 0.75;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, width*0.75);
 }
 
