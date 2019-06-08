@@ -8,11 +8,8 @@ import jsonpickle
 import json
 import os
 import sys
-from absl import flags
 import numpy as np
 from werkzeug import secure_filename
-import skimage.io as io
-import tensorflow as tf
 # from src.util import renderer as vis_util
 sys.path.insert(0, './hmr/')
 import src.config

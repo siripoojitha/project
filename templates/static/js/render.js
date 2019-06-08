@@ -1,12 +1,13 @@
 
 var camera, scene, renderer;
-var geometry, material, mesh;
+var geometry, material, cloudPoints;
 
 var mouse = new THREE.Vector2();
 
 function animate() {
     requestAnimationFrame( animate );
-    controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+    cloudPoints.rotation.y += 0.1 * Math.PI/180;
+    control.update();
     renderer.render( scene, camera );
 }
 
@@ -23,7 +24,7 @@ function ThreeInit(points, view=null) {
     else{
         camera.position.set(1,1,1);
     }
-    camera.lookAt(0, 1, 0);
+    camera.lookAt(0, -1, 0);
     
     // GEOMETRY
     geometry = new THREE.BufferGeometry();
@@ -34,7 +35,7 @@ function ThreeInit(points, view=null) {
     for(let i = 0; i < numPoints; i++){
         positions[i*3] = points[i][0];
         positions[i*3 + 1] = points[i][1];
-        positions[i*3 + 2] = -points[i][2];
+        positions[i*3 + 2] = points[i][2];
         colors[i*3] = baseColor.r;
         colors[i*3 + 1] = baseColor.g;
         colors[i*3 + 2] = baseColor.b;
@@ -45,8 +46,8 @@ function ThreeInit(points, view=null) {
     geometry.computeBoundingBox();
     const pointSize = 0.01;
     let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors } );
-    let pointClouds = new THREE.Points(geometry, material);
-    scene.add(pointClouds);
+    cloudPoints = new THREE.Points(geometry, material);
+    scene.add(cloudPoints);
     
     // RENDER
     renderer = new THREE.WebGLRenderer();
@@ -56,14 +57,7 @@ function ThreeInit(points, view=null) {
     el.appendChild(renderer.domElement);
     window.addEventListener( 'resize', onWindowResize, false );
     // controls
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
-    //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    controls.dampingFactor = 0.25;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 1;
-    controls.maxDistance = 500;
-    controls.maxPolarAngle = Math.PI / 2;
+    control = new THREE.TrackballControls(camera, el);
     animate();
 }
 
