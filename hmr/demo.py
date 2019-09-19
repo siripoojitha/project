@@ -103,8 +103,6 @@ def visualize(img_path, img, proc_param, joints, verts, cam):
     plt.axis('off')
     plt.draw()
     plt.savefig("hmr/output/images/"+os.path.splitext(os.path.basename(img_path))[0]+".png")
-    # import ipdb
-    # ipdb.set_trace()
 
 
 def preprocess_image(img_path, json_path=None):

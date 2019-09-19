@@ -11,45 +11,149 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css">
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" ></script>
+        <!-- Load TensorFlow.js -->
+
     </head>
     <body>
         <div class="container">
-            
+            <h1></h1>
             <div class="row">
-                <div class="col-md-12">
-                    <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
-                        <input type = "file" name = "file" />
-                        <input type = "submit"/>
-                    </form>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <ul class="list-group" style="list-style-type: none;">
-                        {% for imgFile in fileList %}
+                <div class="col-md-4">
+                    <ul class="list-group" 
+                        style="list-style-type: none; max-height: 1200px; overflow-y: scroll;">
                         <li class="list-group-item">
+                            <div class="center-item">
+                                <video autoplay="true" id="videoElement"></video>
+                                <canvas style="display:none;"></canvas>
+                            </div>
+                            <div id="basic" style="text-align:center; margin: 5px;">
+                                <button id="screenshot-button">Capture screenshot</button> 
+                            </div>
+                        </li>
+                        <li>
+                            <img src="" id="screenshot-img">
+                        </li>
+                        {% for imgFile in fileList %}
+                        <li class="list-group-item center-item">
                             <a href="/display/{{imgFile}}">
-                                <img src="/upload_data/{{imgFile}}" alt="{{imgFile}}" height="150" width="150">
+                                <img src="/upload_data/{{imgFile}}?{{timestamp}}" alt="{{imgFile}}" 
+                                height="300" width="300">
                             </a>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-8">
+                    
                     <section id="3d-points">
                         <!-- <svg width="960" height="500"></svg> -->
                     </section>
+                    <legend></legend>
+                    <h2>
+                        your close size is {{render['cloth_size']}} for shoulder distance <bold>{{ render['shouder_distance'] }}</bold>
+                    </h2>
+                    <h2>Here is some cloth you might like ....</h2>
+                    <div style="display: block; height: 300px;">
+                        <ul style="list-style-type: none;">
+                            <li class="vertical-list">
+                                <a= href="#">
+                                    <img src="/static/store/jeans3.jpg" 
+                                    style="width:200px">
+                                </a>
+                            </li>
+                            <li class="vertical-list">
+                                <a= href="#">
+                                    <img src="/static/store/jeans1.jpg?{{timestamp}}" 
+                                    style="width:200px" alt="{{imgFile}}">
+                                </a>
+                            </li>
+                            <li class="vertical-list">
+                                <a= href="#">
+                                    <img src="/static/store/jeans2.jpg?{{timestamp}}" 
+                                    style="width:200px" alt="{{imgFile}}">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h4>3D jointed poses</h4> 
+                        {% for join in render['joints_points'] %}
+                            <div>{{join[0]}}:{{join[1]}}</div>
+                        {% endfor %}
+                    </pre>
+                    <h4>2D jointed poses</h4> 
+                        {% for join in render['joints_points_2d'] %}
+                            <div>{{join[0]}}:{{join[1]}}</div>
+                        {% endfor %}
+                    </pre>
                 </div>
             </div>
         </div>
     </body>
-    <script src="/static/js/scatterPlot.js"></script>
-    <script src="/static/js/TrackballControls.js"></script>
-    <script src="/static/js/render.js"></script>
+    <script src="/static/js/scatterPlot.js?{{timestamp}}"></script>
+    <script src="/static/js/ConvexHull.js?{{timestamp}}"></script>
+    <script src="/static/js/TrackballControls.js?{{timestamp}}"></script>
+    <script src="/static/js/ConvexGeometry.js?{{timestamp}}"></script>
+    <script src="/static/js/render.js?{{timestamp}}"></script>
     <script>
         var renderObject = {{ render|safe }};
-        // console.log({ renderObject });
+        console.log({ renderObject });
         // d3init(renderObject.verts);
-        ThreeInit(renderObject.verts, renderObject.camera);
+        ThreeInit(renderObject.verts, renderObject.camera, renderObject.joints_points );
+    </script>
+    <style>
+        .vertical-list{
+            display:block;
+            float:left;
+            padding: 5px;
+        }
+        .center-item{
+            display: flex;
+            align-items: center;
+        }
+        #videoElement {
+            align-self: auto;
+            background-color: #666;
+        }
+    </style>
+    <script>
+        const vgaConstraints = { video: { width: {exact: 320}, 
+                                          height: {exact: 320} } };
+        const video = document.querySelector("#videoElement");
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia( vgaConstraints )
+                .then(function (stream) { video.srcObject = stream; })
+                .catch(function (err0r) { console.log("Something went wrong!"); });
+        }
+        let screenshotBtn = document.querySelector('#screenshot-button');
+        const img = document.querySelector('#screenshot-img');
+        const canvas = document.createElement('canvas');
+        const sendBase64ToServer = function(blob){
+            var httpPost = new XMLHttpRequest(),
+                    path = "http://localhost:5000/uploader",
+                    data = new FormData();
+            
+            httpPost.onreadystatechange = function(err) {
+                if (httpPost.readyState == 4 && httpPost.status == 200){
+                    location.reload();
+                } else {
+                    console.log(err);
+                }
+            };
+            // Set the content type of the request to json since that's what's being sent
+            console.log(blob)
+            data.append("file", blob, 'webcam.png');
+            httpPost.open("POST", path);
+            httpPost.send(data);
+        };
+        screenshotBtn.onclick = video.onclick = function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            // Other browsers will fall back to image/png
+            img.src = canvas.toDataURL('image/png');
+            canvas.toBlob(sendBase64ToServer, 'image/png');
+            
+        };
+
     </script>
 </html>
