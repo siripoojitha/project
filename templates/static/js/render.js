@@ -12,18 +12,28 @@ function animate() {
 }
 
 
+<<<<<<< HEAD
 function ThreeInit(points, view=null, join_points=[]) {
     console.log({points, view, join_points});
     // SCENE
     scene = new THREE.Scene();
     // CAMERA
     camera = new THREE.PerspectiveCamera(45, 4 / 3, .5, 1000);
+=======
+function ThreeInit(points, view=null) {
+    // SCENE
+    scene = new THREE.Scene();
+
+    // CAMERA
+    camera = new THREE.PerspectiveCamera(50, 4 / 3, .5, 1000);
+>>>>>>> 1f290a6cde9a25288e2a1ee57e9e19814cb4b8be
     if(view){
         camera.position.set(view[0], view[1], view[2]);
     }
     else{
         camera.position.set(1,1,1);
     }
+<<<<<<< HEAD
     // CAMERA
     camera.rotation.y = -90 * Math.PI / 180;
     // camera.position.set(1, 2.5, 2);
@@ -38,10 +48,25 @@ function ThreeInit(points, view=null, join_points=[]) {
         positions[i*3 + 1] = -points[i][1];
         positions[i*3 + 2] = points[i][2];
         const baseColor = new THREE.Color( 0, 1, 0 );
+=======
+    camera.lookAt(0, -1, 0);
+    
+    // GEOMETRY
+    geometry = new THREE.BufferGeometry();
+    const numPoints = points.length;
+    var positions = new Float32Array( numPoints * 3 );
+    var colors = new Float32Array( numPoints * 3 );
+    const baseColor = new THREE.Color( 0, 1, 1 );
+    for(let i = 0; i < numPoints; i++){
+        positions[i*3] = points[i][0];
+        positions[i*3 + 1] = points[i][1];
+        positions[i*3 + 2] = points[i][2];
+>>>>>>> 1f290a6cde9a25288e2a1ee57e9e19814cb4b8be
         colors[i*3] = baseColor.r;
         colors[i*3 + 1] = baseColor.g;
         colors[i*3 + 2] = baseColor.b;
     }
+<<<<<<< HEAD
     console.log({join_points});
     join_points.forEach(join=>{
         let joinPoint = join;
@@ -53,6 +78,8 @@ function ThreeInit(points, view=null, join_points=[]) {
         colors[points.length*3 + 1] = baseColor[1];
         colors[points.length*3 + 2] = baseColor[2];
     });
+=======
+>>>>>>> 1f290a6cde9a25288e2a1ee57e9e19814cb4b8be
     
     geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
     geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
@@ -61,6 +88,7 @@ function ThreeInit(points, view=null, join_points=[]) {
     let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors } );
     cloudPoints = new THREE.Points(geometry, material);
     scene.add(cloudPoints);
+<<<<<<< HEAD
     // RENDER
     // light
     var light = new THREE.PointLight( 0xffffff, 1 );
@@ -68,6 +96,10 @@ function ThreeInit(points, view=null, join_points=[]) {
     // helper
     scene.add( new THREE.AxesHelper( 20 ) );
     //
+=======
+    
+    // RENDER
+>>>>>>> 1f290a6cde9a25288e2a1ee57e9e19814cb4b8be
     renderer = new THREE.WebGLRenderer();
     let el = document.getElementById('3d-points');
     const width = el.offsetWidth;
