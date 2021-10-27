@@ -13,7 +13,7 @@ configobj==5.0.6
 configparser==3.7.4
 cycler==0.10.0
 Cython==0.29.10
-dask==1.2.2
+dask==2021.10.0
 decorator==4.4.0
 deepdish==0.3.6
 defusedxml==0.6.0
